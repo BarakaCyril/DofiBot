@@ -1,0 +1,39 @@
+1. Coder
+
+Writes and maintains the bot.
+
+Step 1: Sets up the Node.js project in the repo (package.json, folder layout, a README explaining how to run it).
+Steps 4–8: Builds each feature one at a time: join/leave, #silent-seat speech, /myvoice, live transcription, /catchup and /recap, then /pause, /resume and automatic deletion.
+After each step, pushes working code to GitHub and tells the tester what to check.
+Step 9: Fixes the problems the tester reports.
+Step 10: Sets the bot up on the VPS with pm2, together with the accounts person.
+Time: the most of any role, about one to two weekend days a week for roughly a month.
+2. Tester
+
+Checks that the bot works for the group, not just on the coder’s laptop.
+
+Step 3 (the most important job): Gets everyone’s consent, records 10 minutes of a normal call, and uploads it to ElevenLabs Scribe on the website. Then goes through the transcript with the group and reports whether the Sheng/Kiswahili mix is usable.
+Steps 4–8: After each step, tests it in the test server. For example: does the voice sound right, do names come out right, do transcripts show the correct speaker, does /pause really stop transcription?
+Reports problems as GitHub issues, saying what they did, what they expected, and what happened.
+Step 9: Runs two or three real test calls with the whole group, collects complaints, and ranks the top few for the coder.
+Privacy checks: confirms transcripts are deleted after the recap.
+3. Accounts & money
+
+Owns the accounts, keys, and bills.
+
+Step 2:
+Creates the Discord test server.
+Registers the bot in the Discord Developer Portal and invites it to the server.
+Creates the ElevenLabs and Anthropic accounts and their API keys.
+Sets a monthly spending limit on each paid service.
+Gives keys to the coder privately (in person or through a password manager, never in the group chat). If a key leaks, replaces it with a new one straight away.
+Checks spending each month and agrees with the group how costs are split.
+Step 10: Rents and pays for the VPS.
+Manages who has access to the GitHub repo (currently BarakaCyril’s account).
+Decisions for the whole group
+
+These aren’t anyone’s job alone. Agree on them before the first real call:
+
+Consent to recording and transcription.
+How long transcripts are kept (deleted right after the recap, or after something like 7 days).
+What language summaries should be written in.
