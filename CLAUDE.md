@@ -64,11 +64,15 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 11. Extras.
 
 ## Current status
-Step 1 in progress.
+Step 1 done (except naming the tester and accounts person).
 - Done: language decided (JavaScript, discord.js + @discordjs/voice).
 - Done: GitHub repo created: https://github.com/BarakaCyril/DofiBot
 - Done: `.gitignore` added (excludes `.env`, `node_modules/`).
-- To do: decide who codes, who tests, who handles accounts and money.
+- Done: roles defined in `READMI.txt`. Brian is the coder; tester and
+  accounts person still to be named.
+- Done: Node project set up (`package.json`, `src/index.js`, `src/config.js`,
+  `.env.example`, `README.md`). Bot logs in once `DISCORD_TOKEN` is set.
+- Next: step 2 (accounts and keys), then step 4.
 
 Rough timeline (one person coding on weekends): steps 1–5 ≈ 2 weekends,
 steps 6–8 ≈ 2 weekends, testing and hosting ≈ 1 weekend. About a month to daily use.

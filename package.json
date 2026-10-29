@@ -1,0 +1,22 @@
+{
+  "name": "silent-seat",
+  "version": "0.1.0",
+  "description": "Discord call bot: speaks typed messages, transcribes and summarizes calls",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BarakaCyril/DofiBot.git"
+  },
+  "dependencies": {
+    "discord.js": "^14.27.0",
+    "dotenv": "^18.0.9"
+  }
+}
