@@ -77,7 +77,10 @@ Step 1 done (except naming the tester and accounts person).
   `.env.example`, `README.md`). Bot logs in once `DISCORD_TOKEN` is set.
 - Step 2 mostly done: Discord bot and ElevenLabs keys are in `.env`, and the
   bot logs in to the test server. Anthropic key not needed until step 7.
-- Next: step 3 (language test, needs the group), and step 4 can start now.
+- Step 3: guide for the tester in `docs/step3-language-test.md`; waiting on the group.
+- Step 4 code written: `/join`, `/leave`, `npm run deploy`. Commands registered
+  in the test server. Needs a live test in a voice channel.
+- Opus and FFmpeg are not installed yet; step 5 needs them to play audio.
 
 Rough timeline (one person coding on weekends): steps 1–5 ≈ 2 weekends,
 steps 6–8 ≈ 2 weekends, testing and hosting ≈ 1 weekend. About a month to daily use.

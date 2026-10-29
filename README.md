@@ -23,16 +23,33 @@ See [CLAUDE.md](CLAUDE.md) for the full plan and current status, and
    ```
 3. Copy `.env.example` to `.env` and fill in the keys. Ask the accounts
    person for them privately. Never commit `.env`.
-4. Start the bot:
+4. Register the slash commands with the test server. Run this once, and again
+   whenever a command is added or changed:
+   ```
+   npm run deploy
+   ```
+5. Start the bot:
    ```
    npm start
    ```
    You should see `Dofibot is online as ...`.
 
+## Commands
+
+| Command | What it does |
+|---|---|
+| `/join` | Dofibot joins the voice channel you're in and posts a transcription notice |
+| `/leave` | Dofibot leaves the voice channel |
+
 ## Project layout
 
 ```
 src/
-  index.js    starts the bot
-  config.js   reads .env and checks required keys are set
+  index.js            starts the bot and runs commands
+  config.js           reads .env and checks required keys are set
+  deploy-commands.js  registers slash commands with Discord
+  commands/
+    index.js          list of all commands
+    join.js           /join
+    leave.js          /leave
 ```
