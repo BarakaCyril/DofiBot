@@ -24,5 +24,14 @@ module.exports = {
   sttModel: process.env.ELEVENLABS_STT_MODEL || 'scribe_v1',
   silentSeatChannel: process.env.SILENT_SEAT_CHANNEL || 'silent-seat',
   transcriptChannel: process.env.TRANSCRIPT_CHANNEL || 'transcript',
-  anthropicKey: process.env.ANTHROPIC_API_KEY,
+  // Grok (xAI) cleans up transcripts after a call. Leave the key blank to skip.
+  xaiKey: process.env.XAI_API_KEY,
+  xaiModel: process.env.XAI_MODEL || 'grok-4',
+  // Africa's Talking SMS for "call started/ended" alerts. Use username
+  // "sandbox" to test with the free sandbox. Leave blank to turn SMS off.
+  atUsername: process.env.AT_USERNAME,
+  atApiKey: process.env.AT_API_KEY,
+  atSenderId: process.env.AT_SENDER_ID, // optional, needs approval from Africa's Talking
+  // Phone numbers to alert, comma-separated, e.g. +254712345678,+254798765432
+  smsTo: (process.env.SMS_TO || '').split(',').map((n) => n.trim()).filter(Boolean),
 };

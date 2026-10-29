@@ -23,7 +23,8 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 - Discord bot: discord.js + @discordjs/voice (JavaScript/Node)
 - Text-to-speech: ElevenLabs API (auto language detection, Kenyan-sounding voices)
 - Transcription: ElevenLabs Scribe (speech-to-text)
-- Summaries: Anthropic API (Claude)
+- Summaries and transcript clean-up: Grok (xAI API, OpenAI-style chat completions
+  over plain fetch). Brian switched from Anthropic to Grok.
 - Secrets: `.env` file only. Never commit keys. `.env` must be in `.gitignore`.
 - Hosting: laptop during development, then a small Linux VPS with pm2.
 
@@ -50,6 +51,18 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 - `/catchup <minutes>`: summarize the last N minutes.
 - `/recap`: runs automatically when the call ends. Main topics, plans, and who
   promised to do what.
+- Cleaned transcript (Brian's choice over a summary): after the raw transcript
+  is posted, Grok (`XAI_MODEL`, default `grok-4`, streaming, `src/refiner.js`) rewrites
+  the whole conversation for an outsider, in the same English/Kiswahili/Sheng
+  mix, slang glossed in brackets, mis-transcriptions fixed, `[unclear]` when
+  unsure. Posted to `#transcript`; later also sent to WhatsApp.
+- Call alerts (`src/callWatcher.js`): first person joins a voice channel = call
+  started; empty for 60s = call ended. SMS via Africa's Talking now
+  (`src/sms.js`, plain text, no emoji); WhatsApp via Africa's Talking later
+  (it's a "Preview" API, needs a Meta-approved business number and templates,
+  and a long transcript needs a reply-to-receive flow with a public webhook,
+  so it waits for the VPS). On call end, Dofibot leaves and posts the
+  transcript if it was recording.
 
 ### Privacy (required)
 - `/pause` and `/resume`: anyone can stop transcription mid-call.
@@ -64,7 +77,7 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 ## Build plan
 1. Roles and tools: decide who codes, tests, and handles accounts. Set up the GitHub repo.
 2. Accounts: Discord test server, bot in Developer Portal, ElevenLabs API key,
-   Anthropic API key. Set spending limits on paid services.
+   xAI (Grok) API key. Set spending limits on paid services.
 3. Language test FIRST: record 10 minutes of a real call (with consent), upload to
    ElevenLabs Scribe on the web, and check how it handles our Sheng/Kiswahili mix.
 4. Bot joins and leaves a voice channel.
@@ -86,7 +99,7 @@ Step 1 done (except naming the tester and accounts person).
 - Done: Node project set up (`package.json`, `src/index.js`, `src/config.js`,
   `.env.example`, `README.md`). Bot logs in once `DISCORD_TOKEN` is set.
 - Step 2 mostly done: Discord bot and ElevenLabs keys are in `.env`, and the
-  bot logs in to the test server. Anthropic key not needed until step 7.
+  bot logs in to the test server. xAI key not needed until step 7.
 - Step 3: guide for the tester in `docs/step3-language-test.md`. Moved: the
   group will run it after steps 4–8 are built, not before.
 - Step 4 done: `/join`, `/leave`, `npm run deploy`, tested in a voice channel.
@@ -120,6 +133,11 @@ Step 1 done (except naming the tester and accounts person).
   ≤250), generated one after another and queued in order; limit raised to
   1,000 chars (the old 400 cap was cutting messages off). People without a
   `/myvoice` pick automatically use their own clone.
+- Step 7 started: transcript clean-up, SMS alerts and auto-leave written.
+  Simulated join/leave tested. Clean-up and SMS untested until
+  `XAI_API_KEY` and the Africa's Talking settings are in `.env`. Model name
+  unverified: when the key arrives, check `GET https://api.x.ai/v1/models`.
+  `/catchup` and `/recap` summaries not built yet.
 - Brian's connection measured 10% packet loss and 26–434ms ping, with the same
   ElevenLabs request taking 5–34s. That causes the stutter and slow speech;
   the VPS (step 10) should fix it.

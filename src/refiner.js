@@ -1,0 +1,92 @@
+// Turns the raw call transcript into a cleaned, readable version with Grok
+// (xAI), for someone who wasn't on the call.
+// Docs: https://docs.x.ai (the API works like OpenAI's chat completions)
+const config = require('./config');
+
+const API = 'https://api.x.ai/v1/chat/completions';
+
+const INSTRUCTIONS = `You clean up transcripts of voice calls between a group of friends in Kenya.
+The call mixes English, Kiswahili and Sheng, often in the same sentence.
+
+The transcript was made by speech-to-text software, so expect mistakes,
+especially on Sheng slang, names and places. Each line is "[mm:ss] Name: text".
+
+Rewrite it so that someone who was NOT on the call can read it and understand
+what happened:
+- Keep the same language mix the speakers used. Do not translate into one language.
+- Fix words that were clearly mis-transcribed when the context makes the right
+  word obvious. If you can't tell what was said, write [unclear].
+- If a Sheng word or phrase would confuse an outsider, add a short explanation
+  in brackets after it, e.g. "tuko na mbogi (our group of friends)".
+- Remove filler and false starts (um, eeh, repeated words) and crosstalk that
+  adds nothing, but never drop anything of substance: plans, decisions,
+  promises, questions, jokes that matter.
+- Keep the speaker names and timestamps, and keep the order of the conversation.
+- Never invent anything that isn't in the transcript.
+
+Reply with only the cleaned transcript, one line per turn, in the format
+"[mm:ss] Name: text". No introduction or closing remarks.`;
+
+function isEnabled() {
+  return Boolean(config.xaiKey);
+}
+
+// rawText: the transcript as posted to #transcript. Returns the cleaned text.
+async function refineTranscript(rawText) {
+  try {
+    return await requestCleanup(rawText);
+  } catch (error) {
+    // Try once more after 5 seconds, in case the internet connection blipped.
+    console.error('Grok clean-up failed, retrying in 5 seconds:', error.message);
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    return requestCleanup(rawText);
+  }
+}
+
+// The answer is streamed back piece by piece, so long transcripts don't hit
+// request time limits.
+async function requestCleanup(rawText) {
+  const response = await fetch(API, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${config.xaiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: config.xaiModel,
+      stream: true,
+      messages: [
+        { role: 'system', content: INSTRUCTIONS },
+        { role: 'user', content: rawText },
+      ],
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`Grok request failed (${response.status}): ${await response.text()}`);
+  }
+
+  // Each streamed line looks like: data: {"choices":[{"delta":{"content":"..."}}]}
+  let text = '';
+  let finishReason = null;
+  let leftover = '';
+  const decoder = new TextDecoder();
+  for await (const chunk of response.body) {
+    const lines = (leftover + decoder.decode(chunk, { stream: true })).split('\n');
+    leftover = lines.pop(); // may be an incomplete line; finish it next time
+    for (const line of lines) {
+      if (!line.startsWith('data: ') || line === 'data: [DONE]') continue;
+      const choice = JSON.parse(line.slice(6)).choices?.[0];
+      text += choice?.delta?.content || '';
+      finishReason = choice?.finish_reason || finishReason;
+    }
+  }
+
+  text = text.trim();
+  if (!text) throw new Error('Grok returned an empty answer');
+  if (finishReason === 'length') {
+    return `${text}\n[The cleaned transcript was cut off here because the call was very long.]`;
+  }
+  return text;
+}
+
+module.exports = { isEnabled, refineTranscript };

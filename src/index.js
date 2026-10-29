@@ -5,6 +5,9 @@ const { getVoiceConnections } = require('@discordjs/voice');
 const config = require('./config');
 const commands = require('./commands');
 const silentSeat = require('./silentSeat');
+const callWatcher = require('./callWatcher');
+const sms = require('./sms');
+const refiner = require('./refiner');
 
 const client = new Client({
   intents: [
@@ -17,6 +20,16 @@ const client = new Client({
 
 client.once(Events.ClientReady, (readyClient) => {
   console.log(`Dofibot is online as ${readyClient.user.tag}`);
+  console.log(`SMS alerts: ${sms.isEnabled() ? 'on' : 'off'} | Transcript clean-up: ${refiner.isEnabled() ? 'on' : 'off'}`);
+});
+
+// Notices calls starting and ending (SMS alerts, auto-leave).
+client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+  try {
+    callWatcher.onVoiceStateUpdate(oldState, newState);
+  } catch (error) {
+    console.error('Error watching voice channels:', error);
+  }
 });
 
 client.on(Events.MessageCreate, (message) => {

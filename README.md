@@ -57,6 +57,22 @@ To add more voices (for example Kenyan ones), the accounts person adds them to
 "My Voices" from the ElevenLabs Voice Library on the website. They show up in
 `/myvoice` within 10 minutes.
 
+## After a call
+
+When recording stops, Dofibot posts the raw transcript to `#transcript` straight
+away. If `XAI_API_KEY` is set, Grok (xAI) then rewrites it so someone who
+wasn't on the call can follow it (same English/Kiswahili/Sheng mix, slang
+explained, transcription mistakes fixed) and Dofibot posts that too.
+
+When everyone leaves the voice channel for a minute, the call counts as over:
+Dofibot leaves, and if it was recording, it posts the transcript.
+
+## SMS alerts
+
+If the Africa's Talking settings in `.env` are filled in, Dofibot texts the
+numbers in `SMS_TO` when a call starts (first person joins) and ends.
+Dofibot doesn't need to be in the call for this. WhatsApp is planned for later.
+
 ## Project layout
 
 ```
@@ -70,6 +86,9 @@ src/
   voiceChoices.js     remembers each person's /myvoice pick (data/voices.json)
   transcriber.js      records each speaker, transcribes on stop with Scribe, posts to #transcript
   transcript.js       the current call's transcript, in memory only
+  refiner.js          cleans up the transcript with Grok (xAI API)
+  callWatcher.js      notices calls starting/ending: SMS alerts, auto-leave
+  sms.js              sends SMS through Africa's Talking
   commands/
     index.js          list of all commands
     join.js           /join

@@ -17,6 +17,7 @@ const ffmpegPath = require('ffmpeg-static');
 const config = require('./config');
 const { speechToText } = require('./elevenlabs');
 const transcript = require('./transcript');
+const refiner = require('./refiner');
 
 const FRAME_MS = 20; // each Discord audio packet is 20ms
 const GAP_SECONDS = 0.5; // silence placed between segments in the MP3
@@ -206,7 +207,8 @@ async function withRetry(task) {
   }
 }
 
-// Posts the transcript. Short ones go in as messages; long ones as a .txt file.
+// Posts the raw transcript straight away, then a cleaned-up version from
+// Grok (if an xAI key is set), which takes a little longer.
 async function postTranscript(channel, startedAt, lines) {
   transcript.set(channel.guild.id, lines);
 
@@ -220,7 +222,23 @@ async function postTranscript(channel, startedAt, lines) {
   const text = lines
     .map((line) => `[${clock(line.time)}] ${line.name}: ${line.text}`)
     .join('\n');
+  await postText(channel, header, text, 'transcript.txt');
 
+  if (!refiner.isEnabled()) return;
+  const working = await channel.send('✨ Cleaning up the transcript so it reads well. This takes a minute…');
+  try {
+    const cleaned = await refiner.refineTranscript(text);
+    transcript.setCleaned(channel.guild.id, cleaned);
+    await postText(channel, `✨ **Cleaned-up transcript** (recording started <t:${startUnix}:t>)`, cleaned, 'cleaned-transcript.txt');
+  } catch (error) {
+    console.error('Cleaning up the transcript failed:', error);
+    await channel.send(`❌ Sorry, cleaning up the transcript failed: ${error.message}`).catch(() => {});
+  }
+  await working.delete().catch(() => {});
+}
+
+// Short text goes in as Discord messages; long text as a .txt file.
+async function postText(channel, header, text, fileName) {
   if (text.length <= 3 * 1900) {
     // Split into Discord-sized messages on line breaks.
     const messages = [header];
@@ -234,7 +252,7 @@ async function postTranscript(channel, startedAt, lines) {
   } else {
     await channel.send({
       content: `${header}\nIt's long, so here it is as a file.`,
-      files: [new AttachmentBuilder(Buffer.from(text, 'utf8'), { name: 'transcript.txt' })],
+      files: [new AttachmentBuilder(Buffer.from(text, 'utf8'), { name: fileName })],
     });
   }
 }
