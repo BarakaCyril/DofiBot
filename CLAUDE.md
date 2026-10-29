@@ -134,9 +134,9 @@ Step 1 done (except naming the tester and accounts person).
   1,000 chars (the old 400 cap was cutting messages off). People without a
   `/myvoice` pick automatically use their own clone.
 - Step 7 started: transcript clean-up, SMS alerts and auto-leave written.
-  Simulated join/leave tested. Clean-up and SMS untested until
-  the Africa's Talking `AT_USERNAME` and `SMS_TO` are in `.env` (the AT key is live,
-  not sandbox). Gemini clean-up tested on a sample: gemini-3.5-flash ~9s, good Sheng glosses.
+  Simulated join/leave tested.
+  SMS tested: sandbox send accepted via the official `africastalking` library
+  (sandbox messages only show in the AT simulator). Gemini clean-up tested on a sample: gemini-3.5-flash ~9s, good Sheng glosses.
   `/catchup` and `/recap` summaries not built yet.
 - Brian's connection measured 10% packet loss and 26–434ms ping, with the same
   ElevenLabs request taking 5–34s. That causes the stutter and slow speech;
