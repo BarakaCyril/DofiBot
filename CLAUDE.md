@@ -75,7 +75,9 @@ Step 1 done (except naming the tester and accounts person).
   accounts person still to be named.
 - Done: Node project set up (`package.json`, `src/index.js`, `src/config.js`,
   `.env.example`, `README.md`). Bot logs in once `DISCORD_TOKEN` is set.
-- Next: step 2 (accounts and keys), then step 4.
+- Step 2 mostly done: Discord bot and ElevenLabs keys are in `.env`, and the
+  bot logs in to the test server. Anthropic key not needed until step 7.
+- Next: step 3 (language test, needs the group), and step 4 can start now.
 
 Rough timeline (one person coding on weekends): steps 1–5 ≈ 2 weekends,
 steps 6–8 ≈ 2 weekends, testing and hosting ≈ 1 weekend. About a month to daily use.

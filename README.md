@@ -11,7 +11,8 @@ Calls mix English, Kiswahili and Sheng, so language detection stays on auto.
 
 See [CLAUDE.md](CLAUDE.md) for the full plan and current status, and
 [READMI.txt](READMI.txt) for who does what. Account setup is in
-[docs/step2-accounts.md](docs/step2-accounts.md).
+[docs/step2-accounts.md](docs/step2-accounts.md), and the language test is in
+[docs/step3-language-test.md](docs/step3-language-test.md).
 
 ## Running it on your laptop
 
