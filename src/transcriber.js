@@ -208,7 +208,7 @@ async function withRetry(task) {
 }
 
 // Posts the raw transcript straight away, then a cleaned-up version from
-// Grok (if an xAI key is set), which takes a little longer.
+// Gemini (if a Gemini key is set), which takes a little longer.
 async function postTranscript(channel, startedAt, lines) {
   transcript.set(channel.guild.id, lines);
 

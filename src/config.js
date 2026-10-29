@@ -24,9 +24,11 @@ module.exports = {
   sttModel: process.env.ELEVENLABS_STT_MODEL || 'scribe_v1',
   silentSeatChannel: process.env.SILENT_SEAT_CHANNEL || 'silent-seat',
   transcriptChannel: process.env.TRANSCRIPT_CHANNEL || 'transcript',
-  // Grok (xAI) cleans up transcripts after a call. Leave the key blank to skip.
-  xaiKey: process.env.XAI_API_KEY,
-  xaiModel: process.env.XAI_MODEL || 'grok-4',
+  // Gemini (Google) cleans up transcripts after a call. Leave the key blank to skip.
+  // gemini-3.5-flash was fast and reliable in testing; gemini-flash-latest was
+  // often overloaded and gemini-2.5-pro isn't offered to new accounts.
+  geminiKey: process.env.GEMINI_API_KEY,
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-3.5-flash',
   // Africa's Talking SMS for "call started/ended" alerts. Use username
   // "sandbox" to test with the free sandbox. Leave blank to turn SMS off.
   atUsername: process.env.AT_USERNAME,

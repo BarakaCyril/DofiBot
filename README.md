@@ -60,7 +60,7 @@ To add more voices (for example Kenyan ones), the accounts person adds them to
 ## After a call
 
 When recording stops, Dofibot posts the raw transcript to `#transcript` straight
-away. If `XAI_API_KEY` is set, Grok (xAI) then rewrites it so someone who
+away. If `GEMINI_API_KEY` is set, Gemini (Google) then rewrites it so someone who
 wasn't on the call can follow it (same English/Kiswahili/Sheng mix, slang
 explained, transcription mistakes fixed) and Dofibot posts that too.
 
@@ -86,7 +86,7 @@ src/
   voiceChoices.js     remembers each person's /myvoice pick (data/voices.json)
   transcriber.js      records each speaker, transcribes on stop with Scribe, posts to #transcript
   transcript.js       the current call's transcript, in memory only
-  refiner.js          cleans up the transcript with Grok (xAI API)
+  refiner.js          cleans up the transcript with Gemini (Google API)
   callWatcher.js      notices calls starting/ending: SMS alerts, auto-leave
   sms.js              sends SMS through Africa's Talking
   commands/

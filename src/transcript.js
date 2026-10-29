@@ -6,7 +6,7 @@ function set(guildId, lines) {
   transcripts.set(guildId, { lines, cleaned: null });
 }
 
-// The cleaned-up version from Grok, once it's ready.
+// The cleaned-up version from Gemini, once it's ready.
 function setCleaned(guildId, cleaned) {
   const entry = transcripts.get(guildId);
   if (entry) entry.cleaned = cleaned;

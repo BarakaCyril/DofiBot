@@ -1,9 +1,9 @@
-// Turns the raw call transcript into a cleaned, readable version with Grok
-// (xAI), for someone who wasn't on the call.
-// Docs: https://docs.x.ai (the API works like OpenAI's chat completions)
+// Turns the raw call transcript into a cleaned, readable version with Gemini
+// (Google), for someone who wasn't on the call.
+// Docs: https://ai.google.dev/api/generate-content
 const config = require('./config');
 
-const API = 'https://api.x.ai/v1/chat/completions';
+const API = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 const INSTRUCTIONS = `You clean up transcripts of voice calls between a group of friends in Kenya.
 The call mixes English, Kiswahili and Sheng, often in the same sentence.
@@ -28,7 +28,7 @@ Reply with only the cleaned transcript, one line per turn, in the format
 "[mm:ss] Name: text". No introduction or closing remarks.`;
 
 function isEnabled() {
-  return Boolean(config.xaiKey);
+  return Boolean(config.geminiKey);
 }
 
 // rawText: the transcript as posted to #transcript. Returns the cleaned text.
@@ -37,7 +37,7 @@ async function refineTranscript(rawText) {
     return await requestCleanup(rawText);
   } catch (error) {
     // Try once more after 5 seconds, in case the internet connection blipped.
-    console.error('Grok clean-up failed, retrying in 5 seconds:', error.message);
+    console.error('Gemini clean-up failed, retrying in 5 seconds:', error.message);
     await new Promise((resolve) => setTimeout(resolve, 5000));
     return requestCleanup(rawText);
   }
@@ -46,26 +46,24 @@ async function refineTranscript(rawText) {
 // The answer is streamed back piece by piece, so long transcripts don't hit
 // request time limits.
 async function requestCleanup(rawText) {
-  const response = await fetch(API, {
+  const response = await fetch(`${API}/${config.geminiModel}:streamGenerateContent?alt=sse`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${config.xaiKey}`,
+      'x-goog-api-key': config.geminiKey,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: config.xaiModel,
-      stream: true,
-      messages: [
-        { role: 'system', content: INSTRUCTIONS },
-        { role: 'user', content: rawText },
-      ],
+      systemInstruction: { parts: [{ text: INSTRUCTIONS }] },
+      contents: [{ role: 'user', parts: [{ text: rawText }] }],
+      generationConfig: { maxOutputTokens: 65536 },
     }),
   });
   if (!response.ok) {
-    throw new Error(`Grok request failed (${response.status}): ${await response.text()}`);
+    throw new Error(`Gemini request failed (${response.status}): ${await response.text()}`);
   }
 
-  // Each streamed line looks like: data: {"choices":[{"delta":{"content":"..."}}]}
+  // Each streamed line looks like:
+  // data: {"candidates":[{"content":{"parts":[{"text":"..."}]},"finishReason":"STOP"}]}
   let text = '';
   let finishReason = null;
   let leftover = '';
@@ -74,16 +72,21 @@ async function requestCleanup(rawText) {
     const lines = (leftover + decoder.decode(chunk, { stream: true })).split('\n');
     leftover = lines.pop(); // may be an incomplete line; finish it next time
     for (const line of lines) {
-      if (!line.startsWith('data: ') || line === 'data: [DONE]') continue;
-      const choice = JSON.parse(line.slice(6)).choices?.[0];
-      text += choice?.delta?.content || '';
-      finishReason = choice?.finish_reason || finishReason;
+      if (!line.startsWith('data: ')) continue;
+      const candidate = JSON.parse(line.slice(6)).candidates?.[0];
+      for (const part of candidate?.content?.parts || []) {
+        if (!part.thought) text += part.text || ''; // skip the model's private reasoning
+      }
+      finishReason = candidate?.finishReason || finishReason;
     }
   }
 
   text = text.trim();
-  if (!text) throw new Error('Grok returned an empty answer');
-  if (finishReason === 'length') {
+  if (finishReason === 'SAFETY' || finishReason === 'PROHIBITED_CONTENT') {
+    throw new Error('Gemini declined to clean up this transcript');
+  }
+  if (!text) throw new Error('Gemini returned an empty answer');
+  if (finishReason === 'MAX_TOKENS') {
     return `${text}\n[The cleaned transcript was cut off here because the call was very long.]`;
   }
   return text;

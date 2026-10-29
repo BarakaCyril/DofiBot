@@ -23,8 +23,8 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 - Discord bot: discord.js + @discordjs/voice (JavaScript/Node)
 - Text-to-speech: ElevenLabs API (auto language detection, Kenyan-sounding voices)
 - Transcription: ElevenLabs Scribe (speech-to-text)
-- Summaries and transcript clean-up: Grok (xAI API, OpenAI-style chat completions
-  over plain fetch). Brian switched from Anthropic to Grok.
+- Summaries and transcript clean-up: Gemini (Google Generative Language API,
+  `streamGenerateContent` over plain fetch). Brian switched Anthropic → Grok → Gemini.
 - Secrets: `.env` file only. Never commit keys. `.env` must be in `.gitignore`.
 - Hosting: laptop during development, then a small Linux VPS with pm2.
 
@@ -52,7 +52,7 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 - `/recap`: runs automatically when the call ends. Main topics, plans, and who
   promised to do what.
 - Cleaned transcript (Brian's choice over a summary): after the raw transcript
-  is posted, Grok (`XAI_MODEL`, default `grok-4`, streaming, `src/refiner.js`) rewrites
+  is posted, Gemini (`GEMINI_MODEL`, default `gemini-3.5-flash`, streaming, `src/refiner.js`) rewrites
   the whole conversation for an outsider, in the same English/Kiswahili/Sheng
   mix, slang glossed in brackets, mis-transcriptions fixed, `[unclear]` when
   unsure. Posted to `#transcript`; later also sent to WhatsApp.
@@ -77,7 +77,7 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 ## Build plan
 1. Roles and tools: decide who codes, tests, and handles accounts. Set up the GitHub repo.
 2. Accounts: Discord test server, bot in Developer Portal, ElevenLabs API key,
-   xAI (Grok) API key. Set spending limits on paid services.
+   Gemini API key. Set spending limits on paid services.
 3. Language test FIRST: record 10 minutes of a real call (with consent), upload to
    ElevenLabs Scribe on the web, and check how it handles our Sheng/Kiswahili mix.
 4. Bot joins and leaves a voice channel.
@@ -99,7 +99,7 @@ Step 1 done (except naming the tester and accounts person).
 - Done: Node project set up (`package.json`, `src/index.js`, `src/config.js`,
   `.env.example`, `README.md`). Bot logs in once `DISCORD_TOKEN` is set.
 - Step 2 mostly done: Discord bot and ElevenLabs keys are in `.env`, and the
-  bot logs in to the test server. xAI key not needed until step 7.
+  bot logs in to the test server. Gemini key not needed until step 7.
 - Step 3: guide for the tester in `docs/step3-language-test.md`. Moved: the
   group will run it after steps 4–8 are built, not before.
 - Step 4 done: `/join`, `/leave`, `npm run deploy`, tested in a voice channel.
@@ -135,8 +135,8 @@ Step 1 done (except naming the tester and accounts person).
   `/myvoice` pick automatically use their own clone.
 - Step 7 started: transcript clean-up, SMS alerts and auto-leave written.
   Simulated join/leave tested. Clean-up and SMS untested until
-  `XAI_API_KEY` and the Africa's Talking settings are in `.env`. Model name
-  unverified: when the key arrives, check `GET https://api.x.ai/v1/models`.
+  the Africa's Talking `AT_USERNAME` and `SMS_TO` are in `.env` (the AT key is live,
+  not sandbox). Gemini clean-up tested on a sample: gemini-3.5-flash ~9s, good Sheng glosses.
   `/catchup` and `/recap` summaries not built yet.
 - Brian's connection measured 10% packet loss and 26–434ms ping, with the same
   ElevenLabs request taking 5–34s. That causes the stutter and slow speech;

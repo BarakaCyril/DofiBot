@@ -53,15 +53,12 @@ slightly different name.
    - If it lets you set a credit limit on the key, set one.
 5. Copy the key. This is the `ELEVENLABS_API_KEY`.
 
-## Part D: Grok (xAI) for transcript clean-up (about 10 min)
+## Part D: Gemini (Google) for transcript clean-up (about 10 min)
 
-1. Sign up at https://console.x.ai.
-2. Under **Billing**, add a payment method and buy a small amount of prepaid
-   credit, for example $5–10. Clean-ups are cheap, so this will last a while.
-3. If there's a spending limit setting, set a **monthly limit** of around $10
-   and leave auto top-up off.
-4. Under **API Keys**, create a key named "dofibot" and copy it. This is
-   the `XAI_API_KEY`.
+1. Go to https://aistudio.google.com/apikey and sign in with a Google account.
+2. Click **Create API key** and copy it. This is the `GEMINI_API_KEY`.
+3. The free tier is usually enough for a friend group. If you turn on billing
+   in Google Cloud, set a **budget alert** of around $10 a month.
 
 ## Part E: Hand the keys to the coder (5 min)
 
@@ -71,7 +68,7 @@ Send these to the coder **privately**:
 |---|---|
 | `DISCORD_TOKEN` | **Yes** |
 | `ELEVENLABS_API_KEY` | **Yes** |
-| `XAI_API_KEY` | **Yes** |
+| `GEMINI_API_KEY` | **Yes** |
 | `DISCORD_CLIENT_ID` | No |
 | `DISCORD_GUILD_ID` | No |
 
@@ -85,7 +82,7 @@ Send these to the coder **privately**:
 
 ## Part F: Ongoing money jobs
 
-- Check the ElevenLabs and xAI (Grok) usage pages once a month.
+- Check the ElevenLabs and Gemini (Google AI Studio) usage pages once a month.
 - Agree with the group how costs are split.
 - Keep a short note of which plan each service is on and when it renews.
 
