@@ -1,6 +1,9 @@
-# Silent Seat: Discord call bot for a friend group
+# Dofibot: Discord call bot for a friend group
 
 ## What we're building
+The bot is called **Dofibot** (`dofibot` in code and package names). The
+`#silent-seat` channel keeps its name: it's a feature, not the bot's name.
+
 A Discord bot for our friend group's voice calls. It lets people who can't talk
 (for example, at work) stay part of the call:
 - They type messages, and the bot speaks them aloud in the call.

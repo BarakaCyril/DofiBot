@@ -6,7 +6,7 @@ slightly different name.
 ## Part A: Discord test server (about 5 min)
 
 1. In Discord, click **+** in the left sidebar, choose **Create My Own**, and
-   name the server something like "Silent Seat Test".
+   name the server something like "Dofibot Test".
 2. Create these channels:
    - A text channel called `#silent-seat`
    - A text channel called `#transcript`
@@ -18,7 +18,7 @@ slightly different name.
 ## Part B: The bot in the Discord Developer Portal (about 10 min)
 
 1. Go to https://discord.com/developers/applications and click
-   **New Application**. Name it "Silent Seat".
+   **New Application**. Name it "Dofibot".
 2. On **General Information**, copy the **Application ID**. This is the
    `DISCORD_CLIENT_ID`.
 3. Go to the **Bot** tab:
@@ -46,7 +46,7 @@ slightly different name.
    monthly credits run out, instead of charging you more. This is your
    spending limit.
 4. Go to **Developers → API Keys** (sometimes under your profile → API Keys)
-   and create a key named "silent-seat":
+   and create a key named "dofibot":
    - If it lets you restrict the key, allow only **Text to Speech**,
      **Speech to Text**, and **Voices (read)**.
    - If it lets you set a credit limit on the key, set one.
@@ -61,7 +61,7 @@ slightly different name.
    time.
 3. Under **Settings → Limits**, set a **monthly spend limit** of around $10.
    Leave auto-reload off.
-4. Under **API Keys**, create a key named "silent-seat" and copy it. This is
+4. Under **API Keys**, create a key named "dofibot" and copy it. This is
    the `ANTHROPIC_API_KEY`.
 5. This key isn't needed until step 7, so it's fine to do this part later.
 
@@ -94,4 +94,4 @@ Send these to the coder **privately**:
 ## Done when
 
 The coder puts the keys in `.env` (copied from `.env.example`) and runs
-`npm start`. If it prints `Silent Seat is online as …`, step 2 is done.
+`npm start`. If it prints `Dofibot is online as …`, step 2 is done.

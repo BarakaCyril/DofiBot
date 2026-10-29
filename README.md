@@ -1,4 +1,4 @@
-# Silent Seat
+# Dofibot
 
 A Discord bot for our friend group's voice calls. People who can't talk (for
 example, at work) can still take part:
@@ -26,7 +26,7 @@ See [CLAUDE.md](CLAUDE.md) for the full plan and current status, and
    ```
    npm start
    ```
-   You should see `Silent Seat is online as ...`.
+   You should see `Dofibot is online as ...`.
 
 ## Project layout
 

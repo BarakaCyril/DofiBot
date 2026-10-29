@@ -1,5 +1,5 @@
 {
-  "name": "silent-seat",
+  "name": "dofibot",
   "version": "0.1.0",
   "description": "Discord call bot: speaks typed messages, transcribes and summarizes calls",
   "main": "src/index.js",

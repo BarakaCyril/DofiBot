@@ -10,7 +10,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`Silent Seat is online as ${readyClient.user.tag}`);
+  console.log(`Dofibot is online as ${readyClient.user.tag}`);
 });
 
 client.login(config.discordToken);
