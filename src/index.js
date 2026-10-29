@@ -50,7 +50,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   const command = commands.find((c) => c.data.name === interaction.commandName);
-  if (!command) return;
+  if (!command) {
+    // Registered with Discord (npm run deploy) but not in the code that's
+    // running: the bot was started before the command was added.
+    await interaction.reply({
+      content: `I don't know /${interaction.commandName} yet. Restart Dofibot (Ctrl+C, then npm start) to load it.`,
+      flags: MessageFlags.Ephemeral,
+    }).catch(() => {});
+    return;
+  }
 
   try {
     await command.execute(interaction);
