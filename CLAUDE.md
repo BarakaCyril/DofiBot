@@ -144,6 +144,8 @@ Step 1 done (except naming the tester and accounts person).
   cleaned → recap (topics, decisions/plans, who promised what, still open);
   `/recap` shows the stored recap again (private). Tested with a simulated
   3-person ElevenLabs-voiced call: catch-up ~12s, all three posts ~34s after stop.
+- `/clear [amount]` added (bulkDelete, ≤100, <14 days, Manage Messages only).
+  Dofibot's role did NOT have Manage Messages in the test server yet.
 - Brian's connection measured 10% packet loss and 26–434ms ping, with the same
   ElevenLabs request taking 5–34s. That causes the stutter and slow speech;
   the VPS (step 10) should fix it.

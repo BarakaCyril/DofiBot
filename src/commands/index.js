@@ -7,4 +7,5 @@ module.exports = [
   require('./transcribe'),
   require('./catchup'),
   require('./recap'),
+  require('./clear'),
 ];

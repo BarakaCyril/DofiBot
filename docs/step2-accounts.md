@@ -30,7 +30,8 @@ slightly different name.
 4. Go to **OAuth2 → URL Generator**:
    - Under Scopes, tick `bot` and `applications.commands`.
    - Under Bot Permissions, tick View Channels, Send Messages, Read Message
-     History, Embed Links, Connect, and Speak.
+     History, Embed Links, Attach Files, Manage Messages (for `/clear`),
+     Add Reactions, Connect, and Speak.
    - Open the generated link at the bottom, choose the test server, and click
      **Authorize**.
 5. Check that the bot now appears (offline) in the test server's member list.

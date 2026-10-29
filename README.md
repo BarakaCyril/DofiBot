@@ -46,6 +46,7 @@ See [CLAUDE.md](CLAUDE.md) for the full plan and current status, and
 | `/transcribe stop` | Stop recording. Dofibot transcribes the whole conversation and posts it to `#transcript`. `/leave` does the same |
 | `/catchup [minutes]` | A few bullet points on what was said in the last N minutes (default 10), while recording. Only you see it |
 | `/recap` | Show the last call's recap again (topics, plans, who promised what). Only you see it |
+| `/clear [amount]` | Delete the last N messages in this channel (default 100, only from the last 14 days). Only people with Manage Messages can use it |
 
 Anything typed in `#silent-seat` while Dofibot is in the call is spoken as
 "*Name* says: …". Dofibot reacts 🔊 once it's spoken, or ❌ if it failed. Messages over
@@ -105,4 +106,5 @@ src/
     transcribe.js     /transcribe start, /transcribe stop
     catchup.js        /catchup
     recap.js          /recap
+    clear.js          /clear
 ```
