@@ -10,7 +10,8 @@ example, at work) can still take part:
 Calls mix English, Kiswahili and Sheng, so language detection stays on auto.
 
 See [CLAUDE.md](CLAUDE.md) for the full plan and current status, and
-[READMI.txt](READMI.txt) for who does what.
+[READMI.txt](READMI.txt) for who does what. Account setup is in
+[docs/step2-accounts.md](docs/step2-accounts.md).
 
 ## Running it on your laptop
 
