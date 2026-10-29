@@ -136,7 +136,9 @@ Step 1 done (except naming the tester and accounts person).
 - Step 7 started: transcript clean-up, SMS alerts and auto-leave written.
   Simulated join/leave tested.
   SMS tested: sandbox send accepted via the official `africastalking` library
-  (sandbox messages only show in the AT simulator). Gemini clean-up tested on a sample: gemini-3.5-flash ~9s, good Sheng glosses.
+  (sandbox messages only show in the AT simulator). The cleaned transcript is
+  also texted (`sms.sendTranscript`: no timestamps, plain GSM characters,
+  parts ≤690 chars + heading, max `SMS_MAX_PARTS` parts, default 3). Gemini clean-up tested on a sample: gemini-3.5-flash ~9s, good Sheng glosses.
   `/catchup` and `/recap` summaries not built yet.
 - Brian's connection measured 10% packet loss and 26–434ms ping, with the same
   ElevenLabs request taking 5–34s. That causes the stutter and slow speech;

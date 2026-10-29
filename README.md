@@ -71,7 +71,10 @@ Dofibot leaves, and if it was recording, it posts the transcript.
 
 If the Africa's Talking settings in `.env` are filled in, Dofibot texts the
 numbers in `SMS_TO` when a call starts (first person joins) and ends.
-Dofibot doesn't need to be in the call for this. WhatsApp is planned for later.
+Dofibot doesn't need to be in the call for this. After a call, it also texts the
+cleaned-up transcript (without timestamps), in parts of up to 760 characters.
+To keep costs down it sends at most `SMS_MAX_PARTS` parts (default 3) per
+person; the rest is in Discord. WhatsApp is planned for later.
 
 ## Project layout
 

@@ -18,6 +18,7 @@ const config = require('./config');
 const { speechToText } = require('./elevenlabs');
 const transcript = require('./transcript');
 const refiner = require('./refiner');
+const sms = require('./sms');
 
 const FRAME_MS = 20; // each Discord audio packet is 20ms
 const GAP_SECONDS = 0.5; // silence placed between segments in the MP3
@@ -230,6 +231,7 @@ async function postTranscript(channel, startedAt, lines) {
     const cleaned = await refiner.refineTranscript(text);
     transcript.setCleaned(channel.guild.id, cleaned);
     await postText(channel, `✨ **Cleaned-up transcript** (recording started <t:${startUnix}:t>)`, cleaned, 'cleaned-transcript.txt');
+    sms.sendTranscript(cleaned); // runs in the background; failures are only logged
   } catch (error) {
     console.error('Cleaning up the transcript failed:', error);
     await channel.send(`❌ Sorry, cleaning up the transcript failed: ${error.message}`).catch(() => {});

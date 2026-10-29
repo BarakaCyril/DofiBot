@@ -36,4 +36,7 @@ module.exports = {
   atSenderId: process.env.AT_SENDER_ID, // optional, needs approval from Africa's Talking
   // Phone numbers to alert, comma-separated, e.g. +254712345678,+254798765432
   smsTo: (process.env.SMS_TO || '').split(',').map((n) => n.trim()).filter(Boolean),
+  // The cleaned transcript is texted in parts of up to 760 characters. To keep
+  // costs down, at most this many parts are sent per person (0 = don't text it).
+  smsMaxParts: Number(process.env.SMS_MAX_PARTS ?? 3),
 };
