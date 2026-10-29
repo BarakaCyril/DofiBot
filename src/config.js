@@ -39,4 +39,7 @@ module.exports = {
   // The cleaned transcript is texted in parts of up to 760 characters. To keep
   // costs down, at most this many parts are sent per person (0 = don't text it).
   smsMaxParts: Number(process.env.SMS_MAX_PARTS ?? 3),
+  // A call counts as ended this many seconds after the last person leaves.
+  // Longer means fewer false "ended/started" texts when someone's connection drops.
+  callEndDelaySeconds: Number(process.env.CALL_END_DELAY_SECONDS ?? 5),
 };

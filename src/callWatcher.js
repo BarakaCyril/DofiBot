@@ -3,13 +3,14 @@
 // while Dofibot is in it, Dofibot leaves and posts the transcript if it was
 // recording. Dofibot doesn't need to be in the call to notice it starting.
 const { getVoiceConnection } = require('@discordjs/voice');
+const config = require('./config');
 const sms = require('./sms');
 const speaker = require('./speaker');
 const transcriber = require('./transcriber');
 
 // Wait this long after the last person leaves before calling the call over,
 // so someone whose connection drops for a moment doesn't end it.
-const END_AFTER_MS = 60 * 1000;
+const END_AFTER_MS = config.callEndDelaySeconds * 1000;
 
 const calls = new Map(); // voice channel ID -> { startedAt, endTimer }
 

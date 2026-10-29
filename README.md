@@ -69,7 +69,7 @@ explained, transcription mistakes fixed) and Dofibot posts that too. Last comes 
 short **recap**: main topics, decisions and plans, who promised to do what, and
 what's still open.
 
-When everyone leaves the voice channel for a minute, the call counts as over:
+When everyone has left the voice channel for 5 seconds (`CALL_END_DELAY_SECONDS`), the call counts as over:
 Dofibot leaves, and if it was recording, it posts the transcript.
 
 ## SMS alerts

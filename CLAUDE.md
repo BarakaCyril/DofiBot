@@ -57,7 +57,7 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
   mix, slang glossed in brackets, mis-transcriptions fixed, `[unclear]` when
   unsure. Posted to `#transcript`; later also sent to WhatsApp.
 - Call alerts (`src/callWatcher.js`): first person joins a voice channel = call
-  started; empty for 60s = call ended. SMS via Africa's Talking now
+  started; empty for `CALL_END_DELAY_SECONDS` (default 5s, Brian's choice; was 60s) = call ended. SMS via Africa's Talking now
   (`src/sms.js`, plain text, no emoji); WhatsApp via Africa's Talking later
   (it's a "Preview" API, needs a Meta-approved business number and templates,
   and a long transcript needs a reply-to-receive flow with a public webhook,
