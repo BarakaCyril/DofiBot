@@ -6,6 +6,7 @@ const {
   createAudioResource,
   getVoiceConnection,
   AudioPlayerStatus,
+  StreamType,
 } = require('@discordjs/voice');
 
 const queues = new Map(); // guildId -> { player, clips: [], busy }
@@ -21,7 +22,7 @@ function getQueue(guildId) {
   return queues.get(guildId);
 }
 
-// audio is a Promise of an MP3 Buffer, so speech can be generated while the
+// audio is a Promise of an Ogg Opus Buffer, so speech can be generated while the
 // previous clip is still playing.
 function enqueue(guildId, audio) {
   const queue = getQueue(guildId);
@@ -52,7 +53,7 @@ async function playNext(guildId) {
     return;
   }
   connection.subscribe(queue.player);
-  queue.player.play(createAudioResource(Readable.from(audio)));
+  queue.player.play(createAudioResource(Readable.from(audio), { inputType: StreamType.OggOpus }));
 }
 
 // Drops anything waiting to be spoken (used when Dofibot leaves the call).

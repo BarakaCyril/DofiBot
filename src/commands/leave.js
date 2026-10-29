@@ -2,6 +2,7 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { getVoiceConnection } = require('@discordjs/voice');
 const speaker = require('../speaker');
+const transcriber = require('../transcriber');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -19,6 +20,7 @@ module.exports = {
     }
 
     speaker.stop(interaction.guildId);
+    transcriber.stop(interaction.guild); // if recording, transcribe what we have
     connection.destroy();
     await interaction.reply('👋 Dofibot has left the call.');
   },

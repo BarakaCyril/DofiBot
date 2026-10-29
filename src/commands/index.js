@@ -3,4 +3,6 @@ module.exports = [
   require('./join'),
   require('./leave'),
   require('./myvoice'),
+  require('./clonemyvoice'),
+  require('./transcribe'),
 ];

@@ -6,6 +6,7 @@ const {
   entersState,
   VoiceConnectionStatus,
 } = require('@discordjs/voice');
+const transcriber = require('../transcriber');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -50,6 +51,8 @@ module.exports = {
       return;
     }
 
+    transcriber.listen(connection, interaction.guild);
+
     // If someone drags Dofibot out or the connection drops, clean up properly
     // unless it reconnects by itself within 5 seconds.
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
@@ -65,7 +68,7 @@ module.exports = {
 
     await interaction.editReply(
       `👋 Dofibot has joined ${voiceChannel}.\n` +
-      '🎙️ Heads up: I may transcribe this call while someone is in silent mode.'
+      "🎙️ Heads up: I'll only record this call if someone uses `/transcribe start`."
     );
   },
 };

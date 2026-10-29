@@ -7,7 +7,7 @@ The bot is called **Dofibot** (`dofibot` in code and package names). The
 A Discord bot for our friend group's voice calls. It lets people who can't talk
 (for example, at work) stay part of the call:
 - They type messages, and the bot speaks them aloud in the call.
-- The bot transcribes the call live so they can read instead of listen.
+- The bot records the call when asked and posts the whole transcript when stopped.
 - The bot summarizes the call on demand and at the end.
 
 We chose Discord because WhatsApp doesn't let bots join group calls.
@@ -30,13 +30,23 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 ## Features
 ### Core (v1)
 - `/join` and `/leave`: bot enters/exits the voice channel. On join, it posts a
-  notice that it may transcribe.
+  notice that it only records if someone uses `/transcribe start`.
 - `#silent-seat` channel: messages typed here are spoken in the call, prefixed
   with the sender's name ("Brian says…").
 - `/myvoice`: each person picks their own ElevenLabs voice.
-- Live transcription: capture each speaker's Discord audio stream separately
-  (gives speaker labels), send ~20–30 second chunks to Scribe, post to `#transcript`.
-  Only run transcription while someone is in silent mode, to control cost.
+- `/clonemyvoice`: upload a recording (plus a required "it's my voice"
+  confirmation) to clone your own voice. A cloned voice is usable only by its
+  owner: the owner's Discord ID is stored in the voice's ElevenLabs description
+  as `discord_user_id:<id>`. Clones without that tag are hidden from everyone.
+  If the description also contains `dofibot_shared`, the owner has agreed that
+  everyone may use it.
+- Whole-call transcription (NOT live): `/transcribe start` records each
+  speaker's Discord audio stream separately (gives speaker labels).
+  `/transcribe stop` (or `/leave`) sends each speaker's full audio to Scribe
+  once, merges everyone's speech in time order, and posts the whole
+  conversation to `#transcript`. Brian chose this over live chunked
+  transcription, which caused too many problems. Recording is off by default,
+  to control cost.
 - `/catchup <minutes>`: summarize the last N minutes.
 - `/recap`: runs automatically when the call ends. Main topics, plans, and who
   promised to do what.
@@ -59,7 +69,7 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
    ElevenLabs Scribe on the web, and check how it handles our Sheng/Kiswahili mix.
 4. Bot joins and leaves a voice channel.
 5. Silent voice feature (`#silent-seat` → ElevenLabs → play in call), then `/myvoice`.
-6. Live transcription to `#transcript`.
+6. Whole-call transcription to `#transcript` (`/transcribe start` / `stop`).
 7. Summaries: `/catchup` and `/recap`.
 8. Privacy: `/pause`, `/resume`, automatic deletion.
 9. Test with the whole group in the test server, fix top complaints, move to main server.
@@ -82,15 +92,45 @@ Step 1 done (except naming the tester and accounts person).
 - Step 4 done: `/join`, `/leave`, `npm run deploy`, tested in a voice channel.
 - Step 5 code written: `#silent-seat` messages spoken via ElevenLabs
   (`eleven_v3` by default, MP3 → ffmpeg-static → opusscript), `/myvoice` with
-  autocomplete, choices saved in `data/voices.json` (gitignored). Needs a live test.
-- ElevenLabs is on the Starter plan (40k characters/month). The API key can't
+  autocomplete, choices saved in `data/voices.json` (gitignored). Committed.
+- Step 6 code written (`src/transcriber.js`): while recording, Opus packets
+  are kept in memory per speaker, grouped into segments (bursts of talk) with
+  real start times; short pauses are padded with silence to stay in time. On
+  stop: each speaker's segments → 16kHz mono MP3 via ffmpeg (0.5s gaps, real
+  silences cut to save credits) → one Scribe call per speaker (`scribe_v1`,
+  word timestamps, one retry) → words mapped back to call time → each burst
+  kept as one line → sorted and posted as `[mm:ss] Name: text` (as a .txt
+  file if long). Lines stored in `src/transcript.js` for step 7. Scribe kept
+  (not Whisper/OpenAI). Tested with a simulated 2-person overlapping call;
+  needs a live test. Ctrl+C while recording loses the recording.
+- Step 7 note: `/catchup <minutes>` mid-call will need to transcribe the
+  recording so far on demand, since there's no live transcript any more.
+- Step 8 note: `/transcribe stop`/`start` already cover most of `/pause` and
+  `/resume`; decide then whether separate commands are still needed.
+- `/clonemyvoice` written (added during step 6 at Brian's request). Blocked
+  until the accounts person gives the API key "Voices: Write"; the clone lock
+  is tested against the real voice list. Cyril (Discord `creal_forreal`, ID
+  1086340383388221520) gave explicit permission for everyone to use his clone
+  (voice ID dBdz2HSq7conRgZ8oSO6). Its description is now
+  `This is my voice discord_user_id:1086340383388221520 dofibot_shared`.
+  The API key now has "Voices: Write", so `/clonemyvoice` can be tested.
+- Speech fixes after group feedback: TTS now requests `opus_48000_64` (Ogg
+  Opus) and plays it as `StreamType.OggOpus`, so nothing is re-encoded during
+  playback. Long messages split at sentence ends (first piece ≤100 chars, then
+  ≤250), generated one after another and queued in order; limit raised to
+  1,000 chars (the old 400 cap was cutting messages off). People without a
+  `/myvoice` pick automatically use their own clone.
+- Brian's connection measured 10% packet loss and 26–434ms ping, with the same
+  ElevenLabs request taking 5–34s. That causes the stutter and slow speech;
+  the VPS (step 10) should fix it.
+- ElevenLabs is on the Starter plan (40k characters/month, 10 voice slots). The API key can't
   read `/v1/models`; that's fine.
 
 Rough timeline (one person coding on weekends): steps 1–5 ≈ 2 weekends,
 steps 6–8 ≈ 2 weekends, testing and hosting ≈ 1 weekend. About a month to daily use.
 
 Step 3 fallback: if Scribe badly garbles our Sheng/Kiswahili mix, lean on
-summaries more than the live transcript.
+summaries more than the raw transcript.
 
 ## Working notes for Claude Code
 - Build one step at a time and get each working before starting the next.

@@ -1,7 +1,7 @@
 // /myvoice: pick the voice Dofibot uses for your #silent-seat messages.
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { getVoiceConnection } = require('@discordjs/voice');
-const { listVoices, textToSpeech } = require('../elevenlabs');
+const { listVoices, canUseVoice, textToSpeech } = require('../elevenlabs');
 const speaker = require('../speaker');
 const voiceChoices = require('../voiceChoices');
 
@@ -22,6 +22,7 @@ module.exports = {
     const voices = await listVoices();
     await interaction.respond(
       voices
+        .filter((v) => canUseVoice(v, interaction.user.id)) // hide other people's clones
         .filter((v) => v.name.toLowerCase().includes(typed))
         .slice(0, 25) // Discord shows at most 25
         .map((v) => ({ name: v.name.slice(0, 100), value: v.id }))
@@ -43,7 +44,7 @@ module.exports = {
     }
 
     const voice = (await listVoices()).find((v) => v.id === chosenId);
-    if (!voice) {
+    if (!voice || !canUseVoice(voice, interaction.user.id)) {
       await interaction.reply({
         content: "I don't know that voice. Pick one from the list as you type.",
         flags: MessageFlags.Ephemeral,

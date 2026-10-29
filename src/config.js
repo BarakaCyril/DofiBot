@@ -20,6 +20,9 @@ module.exports = {
   elevenLabsModel: process.env.ELEVENLABS_MODEL || 'eleven_v3',
   // Voice used for anyone who hasn't picked one with /myvoice.
   defaultVoiceId: process.env.ELEVENLABS_DEFAULT_VOICE_ID || 'JBFqnCBsd6RMkjVDRZzb', // George
+  // Scribe model for transcription. scribe_v1 was faster than scribe_v2 in testing.
+  sttModel: process.env.ELEVENLABS_STT_MODEL || 'scribe_v1',
   silentSeatChannel: process.env.SILENT_SEAT_CHANNEL || 'silent-seat',
+  transcriptChannel: process.env.TRANSCRIPT_CHANNEL || 'transcript',
   anthropicKey: process.env.ANTHROPIC_API_KEY,
 };

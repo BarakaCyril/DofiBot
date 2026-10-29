@@ -6,7 +6,11 @@ const speaker = require('./speaker');
 const voiceChoices = require('./voiceChoices');
 
 // Longer messages are cut off, to keep ElevenLabs costs down.
-const MAX_LENGTH = 400;
+const MAX_LENGTH = 1000;
+// Long messages are spoken in pieces, so the first piece plays while the rest
+// is still being generated. The first piece is short so speech starts sooner.
+const FIRST_PIECE_LENGTH = 100;
+const PIECE_LENGTH = 250;
 
 function cleanText(message) {
   let text = message.cleanContent // turns @mentions into names
@@ -15,6 +19,19 @@ function cleanText(message) {
     .trim();
   if (text.length > MAX_LENGTH) text = text.slice(0, MAX_LENGTH) + '…';
   return text;
+}
+
+// Splits text into pieces at sentence ends.
+function splitIntoPieces(text) {
+  const sentences = text.match(/[^.!?]+[.!?]*\s*/g) || [text];
+  const pieces = [''];
+  for (const sentence of sentences) {
+    const last = pieces.length - 1;
+    const limit = last === 0 ? FIRST_PIECE_LENGTH : PIECE_LENGTH;
+    if (pieces[last] && pieces[last].length + sentence.length > limit) pieces.push('');
+    pieces[pieces.length - 1] += sentence;
+  }
+  return pieces.map((p) => p.trim()).filter(Boolean);
 }
 
 async function handleMessage(message) {
@@ -30,12 +47,21 @@ async function handleMessage(message) {
   }
 
   const name = message.member?.displayName || message.author.username;
-  const audio = textToSpeech(`${name} says: ${text}`, voiceChoices.getVoiceId(message.author.id));
-  speaker.enqueue(message.guild.id, audio);
+  const voiceId = voiceChoices.getVoiceId(message.author.id);
+
+  // Generate the pieces one after another (each starts when the previous one
+  // is ready), and queue them all now so they play in order.
+  let previous = voiceId;
+  const pieces = splitIntoPieces(`${name} says: ${text}`).map((piece) => {
+    const audio = previous.then(async () => textToSpeech(piece, await voiceId));
+    previous = audio;
+    speaker.enqueue(message.guild.id, audio);
+    return audio;
+  });
 
   // React so the sender knows it worked without having to listen.
   try {
-    await audio;
+    await Promise.all(pieces);
     await message.react('🔊');
   } catch (error) {
     console.error('Could not speak message:', error.message);

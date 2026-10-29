@@ -48,7 +48,8 @@ slightly different name.
 4. Go to **Developers → API Keys** (sometimes under your profile → API Keys)
    and create a key named "dofibot":
    - If it lets you restrict the key, allow only **Text to Speech**,
-     **Speech to Text**, and **Voices (read)**.
+     **Speech to Text**, and **Voices (read and write)**. Write is needed for
+     `/clonemyvoice`.
    - If it lets you set a credit limit on the key, set one.
 5. Copy the key. This is the `ELEVENLABS_API_KEY`.
 
