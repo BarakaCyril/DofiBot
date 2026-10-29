@@ -87,6 +87,24 @@ async function stop(guild) {
   return minutes;
 }
 
+// For /catchup: transcribes just the last few minutes of a recording that's
+// still running, without stopping it. Returns the transcript text, or null if
+// nothing is being recorded.
+async function transcribeRecent(guild, minutes) {
+  const recording = recordings.get(guild.id);
+  if (!recording) return null;
+
+  const cutoffMs = Date.now() - recording.startedAt - minutes * 60 * 1000;
+  const speakers = new Map();
+  for (const [userId, segments] of recording.speakers) {
+    const recent = segments
+      .filter((s) => s.startMs + s.packets.length * FRAME_MS > cutoffMs)
+      .map((s) => ({ startMs: s.startMs, packets: s.packets.slice() })); // copy: still recording
+    if (recent.length > 0) speakers.set(userId, recent);
+  }
+  return toText(await processRecording({ startedAt: recording.startedAt, speakers }, guild));
+}
+
 // Transcribes each speaker, then puts everyone's lines in call order. Each
 // burst of talking stays together as one line, so people talking over each
 // other doesn't jumble their words.
@@ -220,15 +238,14 @@ async function postTranscript(channel, startedAt, lines) {
     return;
   }
 
-  const text = lines
-    .map((line) => `[${clock(line.time)}] ${line.name}: ${line.text}`)
-    .join('\n');
+  const text = toText(lines);
   await postText(channel, header, text, 'transcript.txt');
 
   if (!refiner.isEnabled()) return;
   const working = await channel.send('✨ Cleaning up the transcript so it reads well. This takes a minute…');
+  let cleaned = null;
   try {
-    const cleaned = await refiner.refineTranscript(text);
+    cleaned = await refiner.refineTranscript(text);
     transcript.setCleaned(channel.guild.id, cleaned);
     await postText(channel, `✨ **Cleaned-up transcript** (recording started <t:${startUnix}:t>)`, cleaned, 'cleaned-transcript.txt');
     sms.sendTranscript(cleaned); // runs in the background; failures are only logged
@@ -237,6 +254,16 @@ async function postTranscript(channel, startedAt, lines) {
     await channel.send(`❌ Sorry, cleaning up the transcript failed: ${error.message}`).catch(() => {});
   }
   await working.delete().catch(() => {});
+
+  // Then a short recap: topics, plans, who promised what (/recap shows it again).
+  try {
+    const recap = await refiner.summarizeCall(cleaned || text);
+    transcript.setRecap(channel.guild.id, recap);
+    await postText(channel, `📋 **Call recap** (recording started <t:${startUnix}:t>)`, recap, 'recap.txt');
+  } catch (error) {
+    console.error('Writing the recap failed:', error);
+    await channel.send(`❌ Sorry, writing the call recap failed: ${error.message}`).catch(() => {});
+  }
 }
 
 // Short text goes in as Discord messages; long text as a .txt file.
@@ -259,6 +286,11 @@ async function postText(channel, header, text, fileName) {
   }
 }
 
+// Transcript lines -> "[mm:ss] Name: text", one per line.
+function toText(lines) {
+  return lines.map((line) => `[${clock(line.time)}] ${line.name}: ${line.text}`).join('\n');
+}
+
 // Seconds since the start -> "mm:ss" (or "h:mm:ss").
 function clock(seconds) {
   const s = Math.max(0, Math.floor(seconds));
@@ -267,4 +299,4 @@ function clock(seconds) {
   return s >= 3600 ? `${Math.floor(s / 3600)}:${mm}:${ss}` : `${mm}:${ss}`;
 }
 
-module.exports = { listen, start, stop, isRecording };
+module.exports = { listen, start, stop, isRecording, transcribeRecent, toText };

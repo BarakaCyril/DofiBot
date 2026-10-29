@@ -116,8 +116,6 @@ Step 1 done (except naming the tester and accounts person).
   file if long). Lines stored in `src/transcript.js` for step 7. Scribe kept
   (not Whisper/OpenAI). Tested with a simulated 2-person overlapping call;
   needs a live test. Ctrl+C while recording loses the recording.
-- Step 7 note: `/catchup <minutes>` mid-call will need to transcribe the
-  recording so far on demand, since there's no live transcript any more.
 - Step 8 note: `/transcribe stop`/`start` already cover most of `/pause` and
   `/resume`; decide then whether separate commands are still needed.
 - `/clonemyvoice` written (added during step 6 at Brian's request). Blocked
@@ -139,7 +137,13 @@ Step 1 done (except naming the tester and accounts person).
   (sandbox messages only show in the AT simulator). The cleaned transcript is
   also texted (`sms.sendTranscript`: no timestamps, plain GSM characters,
   parts ≤690 chars + heading, max `SMS_MAX_PARTS` parts, default 3). Gemini clean-up tested on a sample: gemini-3.5-flash ~9s, good Sheng glosses.
-  `/catchup` and `/recap` summaries not built yet.
+- Step 7 done: `/catchup [minutes]` (default 10, private reply) transcribes the
+  last N minutes of the running recording without stopping it
+  (`transcriber.transcribeRecent`), or uses the end of the last call's transcript,
+  then Gemini writes 2–6 bullets. After every call Dofibot posts raw →
+  cleaned → recap (topics, decisions/plans, who promised what, still open);
+  `/recap` shows the stored recap again (private). Tested with a simulated
+  3-person ElevenLabs-voiced call: catch-up ~12s, all three posts ~34s after stop.
 - Brian's connection measured 10% packet loss and 26–434ms ping, with the same
   ElevenLabs request taking 5–34s. That causes the stutter and slow speech;
   the VPS (step 10) should fix it.

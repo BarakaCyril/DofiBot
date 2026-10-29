@@ -44,6 +44,8 @@ See [CLAUDE.md](CLAUDE.md) for the full plan and current status, and
 | `/clonemyvoice` | Upload 1–2 minutes of yourself talking (and confirm it is your voice). Dofibot then speaks your messages in your own voice. Only you can use your clone |
 | `/transcribe start` | Start recording the call (off by default, to save credits). Nothing is written to disk |
 | `/transcribe stop` | Stop recording. Dofibot transcribes the whole conversation and posts it to `#transcript`. `/leave` does the same |
+| `/catchup [minutes]` | A few bullet points on what was said in the last N minutes (default 10), while recording. Only you see it |
+| `/recap` | Show the last call's recap again (topics, plans, who promised what). Only you see it |
 
 Anything typed in `#silent-seat` while Dofibot is in the call is spoken as
 "*Name* says: …". Dofibot reacts 🔊 once it's spoken, or ❌ if it failed. Messages over
@@ -62,7 +64,9 @@ To add more voices (for example Kenyan ones), the accounts person adds them to
 When recording stops, Dofibot posts the raw transcript to `#transcript` straight
 away. If `GEMINI_API_KEY` is set, Gemini (Google) then rewrites it so someone who
 wasn't on the call can follow it (same English/Kiswahili/Sheng mix, slang
-explained, transcription mistakes fixed) and Dofibot posts that too.
+explained, transcription mistakes fixed) and Dofibot posts that too. Last comes a
+short **recap**: main topics, decisions and plans, who promised to do what, and
+what's still open.
 
 When everyone leaves the voice channel for a minute, the call counts as over:
 Dofibot leaves, and if it was recording, it posts the transcript.
@@ -89,7 +93,7 @@ src/
   voiceChoices.js     remembers each person's /myvoice pick (data/voices.json)
   transcriber.js      records each speaker, transcribes on stop with Scribe, posts to #transcript
   transcript.js       the current call's transcript, in memory only
-  refiner.js          cleans up the transcript with Gemini (Google API)
+  refiner.js          Gemini (Google API): cleaned transcript, recap, catch-up
   callWatcher.js      notices calls starting/ending: SMS alerts, auto-leave
   sms.js              sends SMS through Africa's Talking
   commands/
@@ -99,4 +103,6 @@ src/
     clonemyvoice.js   /clonemyvoice
     myvoice.js        /myvoice
     transcribe.js     /transcribe start, /transcribe stop
+    catchup.js        /catchup
+    recap.js          /recap
 ```

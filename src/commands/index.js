@@ -5,4 +5,6 @@ module.exports = [
   require('./myvoice'),
   require('./clonemyvoice'),
   require('./transcribe'),
+  require('./catchup'),
+  require('./recap'),
 ];
