@@ -64,7 +64,17 @@ Our group mixes English, Kiswahili, and Sheng, often in the same sentence.
 11. Extras.
 
 ## Current status
-Planning done. Starting at step 1.
+Step 1 in progress.
+- Done: language decided (JavaScript, discord.js + @discordjs/voice).
+- Done: GitHub repo created: https://github.com/BarakaCyril/DofiBot
+- Done: `.gitignore` added (excludes `.env`, `node_modules/`).
+- To do: decide who codes, who tests, who handles accounts and money.
+
+Rough timeline (one person coding on weekends): steps 1–5 ≈ 2 weekends,
+steps 6–8 ≈ 2 weekends, testing and hosting ≈ 1 weekend. About a month to daily use.
+
+Step 3 fallback: if Scribe badly garbles our Sheng/Kiswahili mix, lean on
+summaries more than the live transcript.
 
 ## Working notes for Claude Code
 - Build one step at a time and get each working before starting the next.
