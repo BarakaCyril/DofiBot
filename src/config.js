@@ -2,7 +2,7 @@
 // Never log the values themselves: they are secrets.
 require('dotenv').config({ quiet: true });
 
-const required = ['DISCORD_TOKEN'];
+const required = ['DISCORD_TOKEN', 'ELEVENLABS_API_KEY'];
 const missing = required.filter((name) => !process.env[name]);
 
 if (missing.length > 0) {
@@ -16,5 +16,10 @@ module.exports = {
   clientId: process.env.DISCORD_CLIENT_ID,
   guildId: process.env.DISCORD_GUILD_ID,
   elevenLabsKey: process.env.ELEVENLABS_API_KEY,
+  // eleven_v3 supports Kiswahili; eleven_flash_v2_5 is faster but English-first.
+  elevenLabsModel: process.env.ELEVENLABS_MODEL || 'eleven_v3',
+  // Voice used for anyone who hasn't picked one with /myvoice.
+  defaultVoiceId: process.env.ELEVENLABS_DEFAULT_VOICE_ID || 'JBFqnCBsd6RMkjVDRZzb', // George
+  silentSeatChannel: process.env.SILENT_SEAT_CHANNEL || 'silent-seat',
   anthropicKey: process.env.ANTHROPIC_API_KEY,
 };

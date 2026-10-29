@@ -1,6 +1,7 @@
 // /leave: Dofibot leaves the voice channel.
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { getVoiceConnection } = require('@discordjs/voice');
+const speaker = require('../speaker');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -17,6 +18,7 @@ module.exports = {
       return;
     }
 
+    speaker.stop(interaction.guildId);
     connection.destroy();
     await interaction.reply('👋 Dofibot has left the call.');
   },

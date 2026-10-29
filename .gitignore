@@ -15,3 +15,6 @@ recordings/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Saved /myvoice choices
+data/

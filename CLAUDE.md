@@ -77,10 +77,14 @@ Step 1 done (except naming the tester and accounts person).
   `.env.example`, `README.md`). Bot logs in once `DISCORD_TOKEN` is set.
 - Step 2 mostly done: Discord bot and ElevenLabs keys are in `.env`, and the
   bot logs in to the test server. Anthropic key not needed until step 7.
-- Step 3: guide for the tester in `docs/step3-language-test.md`; waiting on the group.
-- Step 4 code written: `/join`, `/leave`, `npm run deploy`. Commands registered
-  in the test server. Needs a live test in a voice channel.
-- Opus and FFmpeg are not installed yet; step 5 needs them to play audio.
+- Step 3: guide for the tester in `docs/step3-language-test.md`. Moved: the
+  group will run it after steps 4–8 are built, not before.
+- Step 4 done: `/join`, `/leave`, `npm run deploy`, tested in a voice channel.
+- Step 5 code written: `#silent-seat` messages spoken via ElevenLabs
+  (`eleven_v3` by default, MP3 → ffmpeg-static → opusscript), `/myvoice` with
+  autocomplete, choices saved in `data/voices.json` (gitignored). Needs a live test.
+- ElevenLabs is on the Starter plan (40k characters/month). The API key can't
+  read `/v1/models`; that's fine.
 
 Rough timeline (one person coding on weekends): steps 1–5 ≈ 2 weekends,
 steps 6–8 ≈ 2 weekends, testing and hosting ≈ 1 weekend. About a month to daily use.
@@ -90,5 +94,6 @@ summaries more than the live transcript.
 
 ## Working notes for Claude Code
 - Build one step at a time and get each working before starting the next.
+- Don't start step 6 until Brian says to proceed.
 - Keep the code simple enough for a hobby developer to maintain.
 - Never print or log API keys.

@@ -2,4 +2,5 @@
 module.exports = [
   require('./join'),
   require('./leave'),
+  require('./myvoice'),
 ];

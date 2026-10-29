@@ -40,6 +40,14 @@ See [CLAUDE.md](CLAUDE.md) for the full plan and current status, and
 |---|---|
 | `/join` | Dofibot joins the voice channel you're in and posts a transcription notice |
 | `/leave` | Dofibot leaves the voice channel |
+| `/myvoice` | Pick your voice (start typing a name). Leave it empty to see your current voice |
+
+Anything typed in `#silent-seat` while Dofibot is in the call is spoken as
+"*Name* says: …". Dofibot reacts 🔊 once it's spoken, or ❌ if it failed.
+
+To add more voices (for example Kenyan ones), the accounts person adds them to
+"My Voices" from the ElevenLabs Voice Library on the website. They show up in
+`/myvoice` within 10 minutes.
 
 ## Project layout
 
@@ -48,8 +56,13 @@ src/
   index.js            starts the bot and runs commands
   config.js           reads .env and checks required keys are set
   deploy-commands.js  registers slash commands with Discord
+  elevenlabs.js       text-to-speech and voice list from ElevenLabs
+  speaker.js          plays audio in the call, one clip at a time
+  silentSeat.js       speaks messages typed in #silent-seat
+  voiceChoices.js     remembers each person's /myvoice pick (data/voices.json)
   commands/
     index.js          list of all commands
     join.js           /join
     leave.js          /leave
+    myvoice.js        /myvoice
 ```
