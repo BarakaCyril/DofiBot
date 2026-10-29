@@ -21,6 +21,7 @@ const client = new Client({
 client.once(Events.ClientReady, (readyClient) => {
   console.log(`Dofibot is online as ${readyClient.user.tag}`);
   console.log(`SMS alerts: ${sms.isEnabled() ? 'on' : 'off'} | Transcript clean-up: ${refiner.isEnabled() ? 'on' : 'off'}`);
+  callWatcher.trackOngoingCalls(readyClient);
 });
 
 // Notices calls starting and ending (SMS alerts, auto-leave).
